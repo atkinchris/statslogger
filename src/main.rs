@@ -1,22 +1,40 @@
-extern crate chrono;
-extern crate sysinfo;
-
 use chrono::Local;
+use serde::Serialize;
 use std::thread;
 use std::time::Duration;
+use structopt::StructOpt;
 use sysinfo::{ComponentExt, ProcessorExt, System, SystemExt};
 
-#[derive(Debug)]
+#[derive(StructOpt)]
+struct Opts {
+  /// Output as JSON
+  #[structopt(short, long)]
+  json: bool,
+}
+
+#[derive(Debug, Serialize)]
 struct Stats {
   cpu_temp: f32,
   cpu_usage: f32,
+  mem_usage: f32,
   timestamp: String,
 }
 
 impl Stats {
   fn to_string(&self) -> String {
-    format!("{}, {}, {}", self.timestamp, self.cpu_usage, self.cpu_temp)
+    format!(
+      "{}, {:.0}%, {:.0}C, {:.0}%",
+      self.timestamp, self.cpu_usage, self.cpu_temp, self.mem_usage
+    )
   }
+
+  fn to_json(&self) -> String {
+    serde_json::to_string(&self).unwrap()
+  }
+}
+
+fn get_mem_percentage(sys: &System) -> f32 {
+  (sys.get_used_memory() as f32 / sys.get_total_memory() as f32) * 100.0
 }
 
 fn get_cpu_temperature(sys: &System) -> f32 {
@@ -36,25 +54,32 @@ fn get_timestamp() -> String {
   Local::now().to_rfc3339()
 }
 
-fn tick(sys: &mut System) {
+fn tick(sys: &mut System) -> Stats {
   sys.refresh_system();
 
-  let stats = Stats {
+  Stats {
     cpu_temp: get_cpu_temperature(&sys),
     cpu_usage: get_cpu_percentage(&sys),
+    mem_usage: get_mem_percentage(&sys),
     timestamp: get_timestamp(),
-  };
-
-  println!("{}", stats.to_string());
+  }
 }
 
 fn main() {
+  let opt = Opts::from_args();
   let mut sys = System::new();
   sys.refresh_all();
   thread::sleep(Duration::from_secs(1));
 
   loop {
-    tick(&mut sys);
+    let stats = tick(&mut sys);
+
+    if opt.json {
+      println!("{}", stats.to_json());
+    } else {
+      println!("{}", stats.to_string());
+    }
+
     thread::sleep(Duration::from_secs(5));
   }
 }
