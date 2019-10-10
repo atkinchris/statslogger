@@ -6,5 +6,5 @@ authors = ["Chris Atkin <atkinchris@gmail.com>"]
 publish = false
 
 [dependencies]
-chrono = "0.4.6"
-sysinfo = "0.7.0"
+chrono = "0.4.9"
+sysinfo = "0.9.5"
