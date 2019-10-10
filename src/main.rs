@@ -10,6 +10,10 @@ struct Opts {
   /// Output as JSON
   #[structopt(short, long)]
   json: bool,
+
+  /// Set frequency in seconds
+  #[structopt(short, long, default_value = "5")]
+  frequency: u64,
 }
 
 #[derive(Debug, Serialize)]
@@ -67,8 +71,10 @@ fn tick(sys: &mut System) -> Stats {
 
 fn main() {
   let opt = Opts::from_args();
+
   let mut sys = System::new();
   sys.refresh_all();
+
   thread::sleep(Duration::from_secs(1));
 
   loop {
@@ -80,6 +86,6 @@ fn main() {
       println!("{}", stats.to_string());
     }
 
-    thread::sleep(Duration::from_secs(5));
+    thread::sleep(Duration::from_secs(opt.frequency));
   }
 }
