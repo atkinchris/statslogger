@@ -21,7 +21,7 @@ tar -czf "$FILENAME" --directory=target/release $NAME
 SHA256=$(shasum -a 256 $FILENAME | cut -d " " -f 1)
 
 FORMULA=$(cat <<EOM
-class StatsLogger < Formula
+class Statslogger < Formula
   desc "$DESC"
   homepage "https://github.com/$AUTHOR/$NAME"
   url "https://github.com/$AUTHOR/$NAME/releases/download/v$VERSION/$NAME-$VERSION.tar.gz"
