@@ -2,6 +2,14 @@
 
 Tool to log system stats to stdout or a file
 
+## Installing
+
+```
+brew install atkinchris/tools/statslogger
+```
+
+## Usage
+
 ```sh
 $ statslogger --help
 
