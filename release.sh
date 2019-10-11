@@ -27,7 +27,6 @@ class StatsLogger < Formula
   url "https://github.com/$AUTHOR/$NAME/releases/download/v$VERSION/$NAME-$VERSION.tar.gz"
   sha256 "$SHA256"
   bottle :unneeded
-  depends_on :unneeded
   def install
     bin.install "$NAME"
   end
