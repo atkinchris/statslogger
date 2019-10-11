@@ -8,6 +8,7 @@ use structopt::StructOpt;
 use sysinfo::{ComponentExt, ProcessorExt, System, SystemExt};
 
 #[derive(StructOpt)]
+#[structopt(about = env!("CARGO_PKG_DESCRIPTION"))]
 struct Opts {
   /// Output as JSON
   #[structopt(short, long)]
@@ -17,7 +18,7 @@ struct Opts {
   #[structopt(short, long, default_value = "5")]
   frequency: u64,
 
-  /// Output results to file
+  /// Output results to file: {timestamp}, {CPU}%, {temp}C, {MEM}%
   #[structopt(short, long)]
   output: Option<String>,
 }
