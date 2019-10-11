@@ -1,6 +1,6 @@
 [package]
-name = "cpu-stats-logger"
-description = "Tool to log CPU stats"
+name = "statslogger"
+description = "Tool to log system stats to stdout or a file"
 version = "0.1.0"
 authors = ["Chris Atkin <atkinchris@gmail.com>"]
 publish = false
