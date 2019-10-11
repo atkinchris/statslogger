@@ -1,4 +1,5 @@
 use chrono::Local;
+use gethostname::gethostname;
 use serde::Serialize;
 use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
@@ -18,7 +19,7 @@ struct Opts {
   #[structopt(short, long, default_value = "5")]
   frequency: u64,
 
-  /// Output results to file: {timestamp}, {CPU}%, {temp}C, {MEM}%
+  /// Output results to file: {hostname}, {timestamp}, {CPU}%, {temp}C, {MEM}%
   #[structopt(short, long)]
   output: Option<String>,
 }
@@ -29,13 +30,14 @@ struct Stats {
   cpu_usage: f32,
   mem_usage: f32,
   timestamp: String,
+  hostname: String,
 }
 
 impl Stats {
   fn to_string(&self) -> String {
     format!(
-      "{}, {:.0}%, {:.0}C, {:.0}%",
-      self.timestamp, self.cpu_usage, self.cpu_temp, self.mem_usage
+      "{}, {}, {:.0}%, {:.0}C, {:.0}%",
+      self.hostname, self.timestamp, self.cpu_usage, self.cpu_temp, self.mem_usage
     )
   }
 
@@ -65,6 +67,10 @@ fn get_timestamp() -> String {
   Local::now().to_rfc3339()
 }
 
+fn get_hostname() -> String {
+  gethostname().into_string().unwrap()
+}
+
 fn tick(sys: &mut System) -> Stats {
   sys.refresh_system();
 
@@ -73,6 +79,7 @@ fn tick(sys: &mut System) -> Stats {
     cpu_usage: get_cpu_percentage(&sys),
     mem_usage: get_mem_percentage(&sys),
     timestamp: get_timestamp(),
+    hostname: get_hostname(),
   }
 }
 

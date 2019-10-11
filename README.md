@@ -18,5 +18,5 @@ FLAGS:
 
 OPTIONS:
     -f, --frequency <frequency>    Set frequency in seconds [default: 5]
-    -o, --output <output>          Output results to file: {timestamp}, {CPU}%, {temp}C, {MEM}%
+    -o, --output <output>          Output results to file: {hostname}, {timestamp}, {CPU}%, {temp}C, {MEM}%
 ```
