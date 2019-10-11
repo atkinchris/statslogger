@@ -1,5 +1,7 @@
 use chrono::Local;
 use serde::Serialize;
+use std::fs::{File, OpenOptions};
+use std::io::prelude::*;
 use std::thread;
 use std::time::Duration;
 use structopt::StructOpt;
@@ -14,6 +16,10 @@ struct Opts {
   /// Set frequency in seconds
   #[structopt(short, long, default_value = "5")]
   frequency: u64,
+
+  /// Output results to file
+  #[structopt(short, long)]
+  output: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -69,8 +75,24 @@ fn tick(sys: &mut System) -> Stats {
   }
 }
 
+fn open_output_file(file_path: &Option<String>) -> Option<File> {
+  match file_path {
+    Some(file_path) => {
+      let file = OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(file_path)
+        .unwrap();
+
+      Some(file)
+    }
+    None => None,
+  }
+}
+
 fn main() {
   let opt = Opts::from_args();
+  let mut output_file = open_output_file(&opt.output);
 
   let mut sys = System::new();
   sys.refresh_all();
@@ -80,10 +102,18 @@ fn main() {
   loop {
     let stats = tick(&mut sys);
 
-    if opt.json {
-      println!("{}", stats.to_json());
-    } else {
-      println!("{}", stats.to_string());
+    if let Some(output_file) = &mut output_file {
+      writeln!(output_file, "{}", stats.to_string())
+        .unwrap_or_else(|err| println!("Could not write to file: {}", err));
+    }
+
+    match &opt {
+      Opts { json: true, .. } => {
+        println!("{}", stats.to_json());
+      }
+      Opts { json: false, .. } => {
+        println!("{}", stats.to_string());
+      }
     }
 
     thread::sleep(Duration::from_secs(opt.frequency));
