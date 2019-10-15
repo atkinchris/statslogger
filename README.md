@@ -4,15 +4,16 @@ Tool to log system stats to stdout or a file
 
 ## Installing
 
-```
+```sh
 brew install atkinchris/tools/statslogger
 ```
 
 ## Usage
 
+After running the tool, the first emitted result will only appear after the set frequency has passed. Note, at short frequencies, CPU stats may not be accurate, as enough time may not have passed to determine an average percentage.
+
 ```sh
 $ statslogger --help
-
 statslogger 0.1.0
 Tool to log system stats to stdout or a file
 
