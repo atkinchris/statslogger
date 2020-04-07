@@ -1,6 +1,6 @@
 use chrono::Local;
 use serde::Serialize;
-use sysinfo::{ComponentExt, ProcessorExt, System, SystemExt};
+use sysinfo::{ComponentExt, ProcessorExt, RefreshKind, System, SystemExt};
 use whoami::{hostname, username};
 
 #[derive(Default, Serialize)]
@@ -37,7 +37,13 @@ impl Stats {
   }
 
   pub fn create() -> Stats {
-    let mut sys = System::new();
+    let mut sys = System::new_with_specifics(
+      RefreshKind::new()
+        .with_cpu()
+        .with_components()
+        .with_components_list()
+        .with_memory(),
+    );
     &sys.refresh_all();
 
     Stats {
@@ -55,15 +61,15 @@ fn get_mem_percentage(sys: &System) -> f32 {
 
 fn get_cpu_temperature(sys: &System) -> f32 {
   sys
-    .get_components_list()
+    .get_components()
     .into_iter()
     .find(|&component| component.get_label() == "CPU")
-    .unwrap()
+    .expect("Unable to find CPU component")
     .get_temperature()
 }
 
 fn get_cpu_percentage(sys: &System) -> f32 {
-  sys.get_processor_list()[0].get_cpu_usage() * 100.0
+  sys.get_global_processor_info().get_cpu_usage() * 100.0
 }
 
 fn get_timestamp() -> String {
