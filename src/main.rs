@@ -1,4 +1,5 @@
 use crate::stats::Stats;
+use clap::arg_enum;
 use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
 use std::thread;
@@ -7,18 +8,32 @@ use structopt::StructOpt;
 
 mod stats;
 
+arg_enum! {
+  #[derive(Debug)]
+  enum Format {
+      Plain,
+      JSON,
+  }
+}
+
+impl Default for Format {
+  fn default() -> Self {
+    Format::JSON
+  }
+}
+
 #[derive(StructOpt)]
 #[structopt(about = env!("CARGO_PKG_DESCRIPTION"))]
 struct Opts {
-  /// Output as JSON
-  #[structopt(short, long)]
-  json: bool,
+  /// Output format
+  #[structopt(short, long, possible_values = &Format::variants(), case_insensitive = true, default_value)]
+  format: Format,
 
-  /// Set frequency in seconds
+  /// Set frequency time in seconds
   #[structopt(short, long, default_value = "5")]
-  frequency: u64,
+  time: u64,
 
-  /// Output results to file: {hostname}, {timestamp}, {CPU}%, {temp}C, {MEM}%
+  /// Output results to file, in format specified
   #[structopt(short, long)]
   output: Option<String>,
 }
@@ -44,21 +59,19 @@ fn main() {
   let mut stats = Stats::create();
 
   loop {
-    thread::sleep(Duration::from_secs(opt.frequency));
+    thread::sleep(Duration::from_secs(opt.time));
     stats.tick();
 
+    let output = match &opt.format {
+      Format::Plain => stats.to_string(),
+      Format::JSON => stats.to_json(),
+    };
+
     if let Some(output_file) = &mut output_file {
-      writeln!(output_file, "{}", stats.to_string())
+      writeln!(output_file, "{}", output)
         .unwrap_or_else(|err| println!("Could not write to file: {}", err));
     }
 
-    match &opt {
-      Opts { json: true, .. } => {
-        println!("{}", stats.to_json());
-      }
-      Opts { json: false, .. } => {
-        println!("{}", stats.to_string());
-      }
-    }
+    println!("{}", output);
   }
 }
