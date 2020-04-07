@@ -46,13 +46,13 @@ impl Stats {
     serde_json::to_string(&self).unwrap()
   }
 
-  pub fn tick(&mut self) {
+  pub fn tick(&mut self, number_of_processes: usize) {
     self.sys.refresh_all();
 
     self.cpu_temp = get_cpu_temperature(&self.sys);
     self.cpu_usage = get_cpu_percentage(&self.sys);
     self.mem_usage = get_mem_percentage(&self.sys);
-    self.top_processes = get_top_processes(&self.sys);
+    self.top_processes = get_top_processes(&self.sys, number_of_processes);
     self.timestamp = get_timestamp();
   }
 
@@ -93,7 +93,11 @@ fn get_cpu_percentage(sys: &System) -> f32 {
   sys.get_global_processor_info().get_cpu_usage()
 }
 
-fn get_top_processes(sys: &System) -> Vec<Process> {
+fn get_top_processes(sys: &System, number_of_processes: usize) -> Vec<Process> {
+  if number_of_processes == 0 {
+    return Vec::new();
+  }
+
   let mut processes: Vec<Process> = sys
     .get_processes()
     .values()
@@ -109,7 +113,7 @@ fn get_top_processes(sys: &System) -> Vec<Process> {
       .expect("Error sorting processes")
   });
 
-  processes[..10].to_vec()
+  processes[..number_of_processes].to_vec()
 }
 
 fn get_timestamp() -> String {

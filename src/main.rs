@@ -36,6 +36,10 @@ struct Opts {
   /// Output results to file, in format specified
   #[structopt(short, long)]
   output: Option<String>,
+
+  /// Number of processes to log
+  #[structopt(short, long, default_value = "10")]
+  processes: usize,
 }
 
 fn open_output_file(file_path: &Option<String>) -> Option<File> {
@@ -60,7 +64,7 @@ fn main() {
 
   loop {
     thread::sleep(Duration::from_secs(opt.time));
-    stats.tick();
+    stats.tick(opt.processes);
 
     let output = match &opt.format {
       Format::Plain => stats.to_string(),
