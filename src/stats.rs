@@ -1,6 +1,6 @@
 use chrono::Local;
 use serde::Serialize;
-use sysinfo::{ComponentExt, ProcessorExt, RefreshKind, System, SystemExt};
+use sysinfo::{ComponentExt, ProcessExt, ProcessorExt, RefreshKind, System, SystemExt};
 use whoami::{hostname, username};
 
 #[derive(Default, Serialize)]
@@ -13,13 +13,32 @@ pub struct Stats {
   timestamp: String,
   hostname: String,
   username: String,
+  top_processes: Vec<Process>,
+}
+
+#[derive(Default, Serialize, Clone)]
+struct Process {
+  name: String,
+  cpu_usage: f32,
 }
 
 impl Stats {
   pub fn to_string(&self) -> String {
     format!(
-      "{}, {}, {}, {:.0}%, {:.0}C, {:.0}%",
-      self.hostname, self.username, self.timestamp, self.cpu_usage, self.cpu_temp, self.mem_usage
+      "{}, {}, {}, {:.0}%, {:.0}C, {:.0}%, {}",
+      self.hostname,
+      self.username,
+      self.timestamp,
+      self.cpu_usage,
+      self.cpu_temp,
+      self.mem_usage,
+      self
+        .top_processes
+        .clone()
+        .into_iter()
+        .map(|process| format!("{} ({:.1}%)", process.name, process.cpu_usage))
+        .collect::<Vec<String>>()
+        .join(",")
     )
   }
 
@@ -28,11 +47,12 @@ impl Stats {
   }
 
   pub fn tick(&mut self) {
-    self.sys.refresh_system();
+    self.sys.refresh_all();
 
     self.cpu_temp = get_cpu_temperature(&self.sys);
     self.cpu_usage = get_cpu_percentage(&self.sys);
     self.mem_usage = get_mem_percentage(&self.sys);
+    self.top_processes = get_top_processes(&self.sys);
     self.timestamp = get_timestamp();
   }
 
@@ -42,7 +62,8 @@ impl Stats {
         .with_cpu()
         .with_components()
         .with_components_list()
-        .with_memory(),
+        .with_memory()
+        .with_processes(),
     );
     &sys.refresh_all();
 
@@ -69,7 +90,26 @@ fn get_cpu_temperature(sys: &System) -> f32 {
 }
 
 fn get_cpu_percentage(sys: &System) -> f32 {
-  sys.get_global_processor_info().get_cpu_usage() * 100.0
+  sys.get_global_processor_info().get_cpu_usage()
+}
+
+fn get_top_processes(sys: &System) -> Vec<Process> {
+  let mut processes: Vec<Process> = sys
+    .get_processes()
+    .values()
+    .map(|process| Process {
+      name: process.name().to_owned(),
+      cpu_usage: process.cpu_usage(),
+    })
+    .collect();
+
+  processes.sort_by(|a, b| {
+    b.cpu_usage
+      .partial_cmp(&a.cpu_usage)
+      .expect("Error sorting processes")
+  });
+
+  processes[..10].to_vec()
 }
 
 fn get_timestamp() -> String {
