@@ -1,7 +1,7 @@
 [package]
 name = "statslogger"
 description = "Tool to log system stats to stdout or a file"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Chris Atkin <atkinchris@gmail.com>"]
 publish = false
 edition = "2018"

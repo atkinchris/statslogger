@@ -69,3 +69,13 @@ This will log the results in a comma delimited, plain text format, suitable for 
 ```csv
 hostname, user, 2020-04-07T16:33:05.239188+01:00, 8%, 48C, 86%, iTerm2 (7.8%),Google Chrome (2.5%),Google Chrome Helper (Renderer) (2.1%),Google Chrome Helper (Renderer) (1.5%),Finder (0.6%),Code Helper (Renderer) (0.6%),Google Chrome Helper (0.4%),statslogger (0.2%),Code Helper (Renderer) (0.2%),Core Sync (0.2%)
 ```
+
+## As a Service
+
+This tool can be run as a persistent service on macOS. After installing, run `brew services start statslogger` to start the service. This will run the tool on a `time` of 15 seconds, outputting to `~/.statslogger/statslogger.ndjson`.
+
+After updating or reinstalling, you will need to run `brew services restart statslogger`.
+
+### Logging
+
+If running as a service, error logs will be written to Homebrew's default `var/log` directory, usually `/usr/local/var/log/statslogger_err.log`.
