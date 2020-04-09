@@ -2,7 +2,9 @@
 
 Tool to log system stats to stdout or a file
 
-## Installing
+## Installing (macOS only)
+
+Install using [Homebrew](https://brew.sh/).
 
 ```sh
 brew install atkinchris/tools/statslogger
@@ -70,7 +72,14 @@ This will log the results in a comma delimited, plain text format, suitable for 
 hostname, user, 2020-04-07T16:33:05.239188+01:00, 8%, 48C, 86%, iTerm2 (7.8%),Google Chrome (2.5%),Google Chrome Helper (Renderer) (2.1%),Google Chrome Helper (Renderer) (1.5%),Finder (0.6%),Code Helper (Renderer) (0.6%),Google Chrome Helper (0.4%),statslogger (0.2%),Code Helper (Renderer) (0.2%),Core Sync (0.2%)
 ```
 
-## As a Service
+## Releasing (macOS only)
+
+To release a version of this tool, run `./release.sh`. This will build a production copy of the binary, package it, and produce a [Homebrew](https://brew.sh/) formula. Then, do the following steps outside of this repo:
+
+- Paste the contents of the new formula at `./releases/statslogger.rb` into the relevant file in `atkinchris/homebrew-tools` repo.
+- Create a GitHub release for the newly created version tag (which was pushed by `release.sh`) and attach the compiled binary package to it, found at `./releases/statslogger-<version>.tar.gz`.
+
+## As a Service (macOS only)
 
 This tool can be run as a persistent service on macOS. After installing, run `brew services start statslogger` to start the service. This will run the tool on a `time` of 15 seconds, outputting to `~/.statslogger/statslogger.ndjson`.
 
