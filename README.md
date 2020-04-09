@@ -16,21 +16,33 @@ After running the tool, the first emitted result will only appear after the set 
 
 ```sh
 $ statslogger --help
-statslogger 0.2.0
+statslogger 0.4.0
 Tool to log system stats to stdout or a file
 
 USAGE:
     statslogger [OPTIONS]
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -h, --help
+            Prints help information
+
+    -V, --version
+            Prints version information
+
 
 OPTIONS:
-    -f, --format <format>          Output format [default: JSON]  [possible values: Plain, JSON]
-    -o, --output <output>          Output results to file, in format specified
-    -p, --processes <processes>    Number of processes to log [default: 10]
-    -t, --time <time>              Set frequency time in seconds [default: 5]
+    -f, --format <format>
+            Output format [default: JSON]  [possible values: Plain, JSON]
+
+    -o, --output <output>
+            Output results to file, in format specified, appended with current date and hour.
+
+            For example: --output log.ndjson => log_2020040914.ndjson
+    -p, --processes <processes>
+            Number of processes to log [default: 10]
+
+    -t, --time <time>
+            Set frequency time in seconds [default: 5]
 ```
 
 ## Formats
@@ -81,7 +93,7 @@ To release a version of this tool, run `./release.sh`. This will build a product
 
 ## As a Service (macOS only)
 
-This tool can be run as a persistent service on macOS. After installing, run `brew services start statslogger` to start the service. This will run the tool on a `time` of 15 seconds, outputting to Homebrew's default `var/log` directory, usually `/usr/local/var/log/statslogger.ndjson`.
+This tool can be run as a persistent service on macOS. After installing, run `brew services start statslogger` to start the service. This will run the tool on a `time` of 15 seconds, outputting to Homebrew's default `var/log` directory, usually `/usr/local/var/log/statslogger_<timestamp>.ndjson`.
 
 After updating or reinstalling, you will need to run `brew services restart statslogger`.
 

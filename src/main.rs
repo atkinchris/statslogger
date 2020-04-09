@@ -1,7 +1,10 @@
 use crate::stats::Stats;
+use chrono::Local;
 use clap::arg_enum;
+use std::ffi::OsStr;
 use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
+use std::path::Path;
 use std::thread;
 use std::time::Duration;
 use structopt::StructOpt;
@@ -33,7 +36,9 @@ struct Opts {
   #[structopt(short, long, default_value = "5")]
   time: u64,
 
-  /// Output results to file, in format specified
+  /// Output results to file, in format specified, appended with current date and hour.
+  ///
+  /// For example: --output log.ndjson => log_2020040914.ndjson
   #[structopt(short, long)]
   output: Option<String>,
 
@@ -42,24 +47,26 @@ struct Opts {
   processes: usize,
 }
 
-fn open_output_file(file_path: &Option<String>) -> Option<File> {
-  match file_path {
-    Some(file_path) => {
-      let file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(file_path)
-        .unwrap();
+fn open_output_file(file_path: &String) -> File {
+  let extension = Path::new(file_path)
+    .extension()
+    .and_then(OsStr::to_str)
+    .unwrap();
+  let date = Local::now().format("%Y%m%d%H").to_string();
+  let compound_path = file_path.replace(
+    &format!(".{}", extension),
+    &format!("_{}.{}", date, extension),
+  );
 
-      Some(file)
-    }
-    None => None,
-  }
+  OpenOptions::new()
+    .create(true)
+    .append(true)
+    .open(&compound_path)
+    .expect(&format!("Could not open file \"{}\"", &compound_path))
 }
 
 fn main() {
   let opt = Opts::from_args();
-  let mut output_file = open_output_file(&opt.output);
   let mut stats = Stats::create();
 
   loop {
@@ -71,7 +78,8 @@ fn main() {
       Format::JSON => stats.to_json(),
     };
 
-    if let Some(output_file) = &mut output_file {
+    if let Some(output_file_path) = &opt.output {
+      let mut output_file = open_output_file(output_file_path);
       writeln!(output_file, "{}", output)
         .unwrap_or_else(|err| println!("Could not write to file: {}", err));
     }
