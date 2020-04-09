@@ -81,10 +81,10 @@ To release a version of this tool, run `./release.sh`. This will build a product
 
 ## As a Service (macOS only)
 
-This tool can be run as a persistent service on macOS. After installing, run `brew services start statslogger` to start the service. This will run the tool on a `time` of 15 seconds, outputting to `~/.statslogger/statslogger.ndjson`.
+This tool can be run as a persistent service on macOS. After installing, run `brew services start statslogger` to start the service. This will run the tool on a `time` of 15 seconds, outputting to Homebrew's default `var/log` directory, usually `/usr/local/var/log/statslogger.ndjson`.
 
 After updating or reinstalling, you will need to run `brew services restart statslogger`.
 
-### Logging
+### Error Logging
 
 If running as a service, error logs will be written to Homebrew's default `var/log` directory, usually `/usr/local/var/log/statslogger_err.log`.

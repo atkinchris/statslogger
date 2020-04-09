@@ -49,7 +49,7 @@ class Statslogger < Formula
       <key>KeepAlive</key>
       <false />
       <key>WorkingDirectory</key>
-      <string>#{HOMEBREW_PREFIX}/.statslogger/</string>
+      <string>#{var}/log</string>
       <key>StandardOutPath</key>
       <string>/dev/null</string>
       <key>StandardErrorPath</key>
