@@ -1,13 +1,11 @@
 use crate::stats::Stats;
-use chrono::Local;
+
 use clap::arg_enum;
-use std::fs::{File, OpenOptions};
-use std::io::prelude::*;
-use std::path::Path;
 use std::thread;
 use std::time::Duration;
 use structopt::StructOpt;
 
+mod filelogging;
 mod stats;
 
 arg_enum! {
@@ -44,22 +42,6 @@ struct Opts {
   processes: usize,
 }
 
-fn open_output_file(file_path: &String, filename_prefix: &String) -> File {
-  let date = Local::now().format("%Y%m%d_%H").to_string();
-  let filename = &format!("statslogger_{}_{}", filename_prefix, date);
-  let path = Path::new(file_path).join(filename);
-  let compound_path = path.to_str().expect(&format!(
-    "Could not join file paths: {} and {}",
-    &file_path, &filename
-  ));
-
-  OpenOptions::new()
-    .create(true)
-    .append(true)
-    .open(&compound_path)
-    .expect(&format!("Could not open file \"{}\"", &compound_path))
-}
-
 fn main() {
   let opt = Opts::from_args();
   let mut stats = Stats::create();
@@ -74,9 +56,12 @@ fn main() {
     };
 
     if let Some(output_path) = &opt.output {
-      let mut output_file = open_output_file(output_path, &stats.hostname);
-      writeln!(output_file, "{}", output)
-        .unwrap_or_else(|err| println!("Could not write to file: {}", err));
+      filelogging::write_to_file(
+        output_path,
+        &format!("statslogger_{}", &stats.hostname),
+        &output,
+      )
+      .unwrap_or_else(|err| println!("Could not write to file: {}", err));
     }
 
     println!("{}", output);
