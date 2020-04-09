@@ -6,6 +6,7 @@ use std::time::Duration;
 use structopt::StructOpt;
 
 mod filelogging;
+mod httplogging;
 mod stats;
 
 arg_enum! {
@@ -33,9 +34,13 @@ struct Opts {
   #[structopt(short, long, default_value = "5")]
   time: u64,
 
-  /// Output logs to a folder, in files grouped by current date and hour.
+  /// Output logs to a folder, in files grouped by current date and hour
   #[structopt(short, long)]
   output: Option<String>,
+
+  /// Post logs to a URL, in JSON format
+  #[structopt(short, long)]
+  url: Option<String>,
 
   /// Number of processes to log
   #[structopt(short, long, default_value = "10")]
@@ -62,6 +67,11 @@ fn main() {
         &output,
       )
       .unwrap_or_else(|err| println!("Could not write to file: {}", err));
+    }
+
+    if let Some(url) = &opt.url {
+      httplogging::post_to_url(url, stats.to_json())
+        .unwrap_or_else(|err| println!("Could not post to url: {}", err));
     }
 
     println!("{}", output);
