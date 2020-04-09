@@ -3,23 +3,23 @@ use serde::Serialize;
 use sysinfo::{ComponentExt, ProcessExt, ProcessorExt, RefreshKind, System, SystemExt};
 use whoami::{hostname, username};
 
+#[derive(Default, Serialize, Clone)]
+pub struct Process {
+  pub name: String,
+  pub cpu_usage: f32,
+}
+
 #[derive(Default, Serialize)]
 pub struct Stats {
   #[serde(skip_serializing)]
   sys: System,
-  cpu_temp: f32,
-  cpu_usage: f32,
-  mem_usage: f32,
-  timestamp: String,
-  hostname: String,
-  username: String,
-  top_processes: Vec<Process>,
-}
-
-#[derive(Default, Serialize, Clone)]
-struct Process {
-  name: String,
-  cpu_usage: f32,
+  pub cpu_temp: f32,
+  pub cpu_usage: f32,
+  pub mem_usage: f32,
+  pub timestamp: String,
+  pub hostname: String,
+  pub username: String,
+  pub top_processes: Vec<Process>,
 }
 
 impl Stats {

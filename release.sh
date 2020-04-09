@@ -42,7 +42,7 @@ class Statslogger < Formula
         <string>--time</string>
         <string>15</string>
         <string>--output</string>
-        <string>statslogger.ndjson</string>
+        <string>.</string>
       </array>
       <key>RunAtLoad</key>
       <true />
