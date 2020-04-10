@@ -16,13 +16,14 @@ After running the tool, the first emitted result will only appear after the set 
 
 ```sh
 $ statslogger --help
-statslogger 0.5.0
+statslogger 0.7.0
 Tool to log system stats to stdout or a file
 
 USAGE:
-    statslogger [OPTIONS]
+    statslogger [FLAGS] [OPTIONS]
 
 FLAGS:
+        --debug      Show debug messages
     -h, --help       Prints help information
     -V, --version    Prints version information
 
@@ -31,6 +32,17 @@ OPTIONS:
     -o, --output <output>          Output logs to a folder, in files grouped by current date and hour
     -p, --processes <processes>    Number of processes to log [default: 10]
     -t, --time <time>              Set frequency time in seconds [default: 5]
+    -u, --url <url>                Post logs to a URL, in JSON format [env: STATSLOGGER_URL]
+```
+
+## Sending stats to a remote service
+
+In addition to logging to `stdout` and a folder, this tool can also send log lines over http/https to a remote service. Logs will be sent as soon as they are generated, in JSON format, via a `POST` method. To enable this option, set the `--url` option.
+
+The URL can be set by command line argument (`-u, --url`), or an environment variable (`STATSLOGGER_URL`). Additionally, if a `.statslogger` file is present in the home directory of the executing user, it will also be loaded into the environment. This file is optional, and should be in the standard [dotenv](https://github.com/motdotla/dotenv) format, for example:
+
+```txt
+STATSLOGGER_URL=http://example.com
 ```
 
 ## Formats
