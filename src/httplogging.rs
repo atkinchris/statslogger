@@ -4,7 +4,7 @@ pub fn post_to_url(url: &String, body: String) -> Result<(), String> {
   let client = Client::new();
   let response = client
     .post(url)
-    .body(body)
+    .json(&body)
     .send()
     .or_else(|err| Err(format!("Error posting to url: {}", err)))?;
 
