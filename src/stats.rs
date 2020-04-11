@@ -1,7 +1,7 @@
 use chrono::Local;
 use serde::Serialize;
 use sysinfo::{ComponentExt, ProcessExt, ProcessorExt, RefreshKind, System, SystemExt};
-use whoami::{hostname, username};
+use whoami::{hostname, os, platform, username};
 
 #[derive(Default, Serialize, Clone)]
 pub struct Process {
@@ -19,16 +19,20 @@ pub struct Stats {
   pub timestamp: String,
   pub hostname: String,
   pub username: String,
+  pub os: String,
+  pub platform: String,
   pub top_processes: Vec<Process>,
 }
 
 impl Stats {
   pub fn to_string(&self) -> String {
     format!(
-      "{}, {}, {}, {:.0}%, {:.0}C, {:.0}%, {}",
+      "{}, {}, {}, {}, {}, {:.0}%, {:.0}C, {:.0}%, {}",
       self.hostname,
       self.username,
       self.timestamp,
+      self.platform,
+      self.os,
       self.cpu_usage,
       self.cpu_temp,
       self.mem_usage,
@@ -71,6 +75,8 @@ impl Stats {
       sys,
       hostname: hostname(),
       username: username(),
+      platform: platform().to_string(),
+      os: os(),
       ..Default::default()
     }
   }
