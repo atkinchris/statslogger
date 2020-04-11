@@ -16,16 +16,17 @@ After running the tool, the first emitted result will only appear after the set 
 
 ```sh
 $ statslogger --help
-statslogger 0.7.0
+statslogger 0.8.0
 Tool to log system stats to stdout or a file
 
 USAGE:
     statslogger [FLAGS] [OPTIONS]
 
 FLAGS:
-        --debug      Show debug messages
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+        --debug         Show debug messages
+    -h, --help          Prints help information
+        --no-hashing    Disable hashing of username
+    -V, --version       Prints version information
 
 OPTIONS:
     -f, --format <format>          Output format [default: JSON]  [possible values: Plain, JSON]
@@ -51,17 +52,17 @@ All formats log to a single line, for easy piping into other tools like `jq`.
 
 Below is the information that is logged from this tool. For plain text output, the comma delimited columns are in the same order as this table. If data is formatted for plain text output, it's format is shown separately.
 
-| Key             | Example                                              | Plain Formatting    | Description                |
-| --------------- | ---------------------------------------------------- | ------------------- | -------------------------- |
-| `hostname`      | `DESKTOP_WORK`                                       |                     | Hostname for system        |
-| `username`      | `user`                                               |                     | Username of executing user |
-| `timestamp`     | `2020-04-07T16:29:50.616+01:00`                      |                     | Timestamp                  |
-| `platform`      | `Mac OS`                                             |                     | Platform name              |
-| `os`            | `Mac OS X 10.15.3 19D76`                             |                     | OS name and version        |
-| `cpu_usage`     | `3.3916273`                                          | `3%`                | CPU usage (percentage)     |
-| `cpu_temp`      | `48.0625`                                            | `48C`               | CPU Temperature (Celcius)  |
-| `mem_usage`     | `84.902954`                                          | `84%`               | Memory usage (percentage)  |
-| `top_processes` | `[{ "name": "iTerm2", "cpu_usage": 3.8789282 }, ..]` | `iTerm2 (3.9%), ..` | Top processes (array)      |
+| Key             | Example                                              | Plain Formatting    | Description                                    |
+| --------------- | ---------------------------------------------------- | ------------------- | ---------------------------------------------- |
+| `hostname`      | `DESKTOP_WORK`                                       |                     | Hostname for system                            |
+| `username`      | `user` or `04f8996d`                                 |                     | Username of executing user (hashed by default) |
+| `timestamp`     | `2020-04-07T16:29:50.616+01:00`                      |                     | Timestamp                                      |
+| `platform`      | `Mac OS`                                             |                     | Platform name                                  |
+| `os`            | `Mac OS X 10.15.3 19D76`                             |                     | OS name and version                            |
+| `cpu_usage`     | `3.3916273`                                          | `3%`                | CPU usage (percentage)                         |
+| `cpu_temp`      | `48.0625`                                            | `48C`               | CPU Temperature (Celcius)                      |
+| `mem_usage`     | `84.902954`                                          | `84%`               | Memory usage (percentage)                      |
+| `top_processes` | `[{ "name": "iTerm2", "cpu_usage": 3.8789282 }, ..]` | `iTerm2 (3.9%), ..` | Top processes (array)                          |
 
 ## Releasing (macOS only)
 

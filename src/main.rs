@@ -10,6 +10,7 @@ use std::time::Duration;
 use structopt::StructOpt;
 
 mod filelogging;
+mod hash;
 mod httplogging;
 mod stats;
 
@@ -50,6 +51,10 @@ struct Opts {
   #[structopt(short, long, default_value = "10")]
   processes: usize,
 
+  /// Disable hashing of username
+  #[structopt(long)]
+  no_hashing: bool,
+
   /// Show debug messages
   #[structopt(long)]
   debug: bool,
@@ -62,7 +67,7 @@ fn main() {
   let config_read_result = dotenv::from_path(config_path);
 
   let opt = Opts::from_args();
-  let mut stats = Stats::create();
+  let mut stats = Stats::create(!opt.no_hashing);
 
   stderrlog::new()
     .module(module_path!())

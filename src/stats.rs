@@ -1,3 +1,4 @@
+use crate::hash;
 use chrono::Local;
 use serde::Serialize;
 use sysinfo::{ComponentExt, ProcessExt, ProcessorExt, RefreshKind, System, SystemExt};
@@ -60,7 +61,7 @@ impl Stats {
     self.timestamp = get_timestamp();
   }
 
-  pub fn create() -> Stats {
+  pub fn create(hash_pii: bool) -> Stats {
     let mut sys = System::new_with_specifics(
       RefreshKind::new()
         .with_cpu()
@@ -71,10 +72,16 @@ impl Stats {
     );
     &sys.refresh_all();
 
+    let mut username = username();
+
+    if hash_pii {
+      username = hash::hash_string(username);
+    }
+
     Stats {
       sys,
+      username,
       hostname: hostname(),
-      username: username(),
       platform: platform().to_string(),
       os: os(),
       ..Default::default()
