@@ -8,6 +8,7 @@ edition = "2018"
 
 [lib]
 path = "src/stats.rs"
+edition = "2018"
 
 [dependencies]
 chrono = "0.4.9"
