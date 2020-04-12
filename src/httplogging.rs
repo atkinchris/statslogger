@@ -1,10 +1,12 @@
 use reqwest::blocking::Client;
+use reqwest::header::CONTENT_TYPE;
 
 pub fn post_to_url(url: &String, body: String) -> Result<(), String> {
   let client = Client::new();
   let response = client
     .post(url)
-    .json(&body)
+    .header(CONTENT_TYPE, "application/json")
+    .body(body)
     .send()
     .or_else(|err| Err(format!("Error posting to url: {}", err)))?;
 
