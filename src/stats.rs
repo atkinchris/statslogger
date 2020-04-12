@@ -1,6 +1,8 @@
-use crate::hash;
 use chrono::Local;
 use serde::Serialize;
+use sha2::digest::Digest;
+use sha2::Sha256;
+use std::string::String;
 use sysinfo::{ComponentExt, ProcessExt, ProcessorExt, RefreshKind, System, SystemExt};
 use whoami::{hostname, os, platform, username};
 
@@ -80,7 +82,7 @@ impl Stats {
     let mut username = username();
 
     if hash_pii {
-      username = hash::hash_string(username);
+      username = hash_string(username);
     }
 
     Stats {
@@ -144,4 +146,8 @@ fn get_top_processes(sys: &System, max_processes: usize) -> Vec<Process> {
 
 fn get_timestamp() -> String {
   Local::now().to_rfc3339()
+}
+
+fn hash_string(input: String) -> String {
+  format!("{:x}", Sha256::digest(input.as_bytes()))[..8].to_owned()
 }

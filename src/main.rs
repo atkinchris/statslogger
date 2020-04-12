@@ -10,7 +10,6 @@ use std::time::Duration;
 use structopt::StructOpt;
 
 mod filelogging;
-mod hash;
 mod httplogging;
 mod stats;
 

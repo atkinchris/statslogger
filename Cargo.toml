@@ -6,6 +6,9 @@ authors = ["Chris Atkin <atkinchris@gmail.com>"]
 publish = false
 edition = "2018"
 
+[lib]
+path = "src/stats.rs"
+
 [dependencies]
 chrono = "0.4.9"
 clap = "2.33.0"
