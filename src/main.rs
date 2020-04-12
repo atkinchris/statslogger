@@ -47,7 +47,7 @@ struct Opts {
   #[structopt(short, long, env = "STATSLOGGER_URL", hide_env_values = true)]
   url: Option<String>,
 
-  /// Number of processes to log
+  /// Maximum number of processes to log
   #[structopt(short, long, default_value = "10")]
   processes: usize,
 

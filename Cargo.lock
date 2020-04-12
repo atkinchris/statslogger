@@ -997,7 +997,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "statslogger"
-version = "0.8.1"
+version = "0.8.2"
 dependencies = [
  "chrono 0.4.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.33.0 (registry+https://github.com/rust-lang/crates.io-index)",

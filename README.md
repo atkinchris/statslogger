@@ -16,7 +16,7 @@ After running the tool, the first emitted result will only appear after the set 
 
 ```sh
 $ statslogger --help
-statslogger 0.8.0
+statslogger 0.8.2
 Tool to log system stats to stdout or a file
 
 USAGE:
@@ -31,7 +31,7 @@ FLAGS:
 OPTIONS:
     -f, --format <format>          Output format [default: JSON]  [possible values: Plain, JSON]
     -o, --output <output>          Output logs to a folder, in files grouped by current date and hour
-    -p, --processes <processes>    Number of processes to log [default: 10]
+    -p, --processes <processes>    Maximum number of processes to log [default: 10]
     -t, --time <time>              Set frequency time in seconds [default: 5]
     -u, --url <url>                Post logs to a URL, in JSON format [env: STATSLOGGER_URL]
 ```
