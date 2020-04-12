@@ -1,20 +1,20 @@
 use chrono::Local;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sha2::digest::Digest;
 use sha2::Sha256;
 use std::string::String;
 use sysinfo::{ComponentExt, ProcessExt, ProcessorExt, RefreshKind, System, SystemExt};
 use whoami::{hostname, os, platform, username};
 
-#[derive(Default, Serialize, Clone)]
+#[derive(Default, Serialize, Deserialize, Clone)]
 pub struct Process {
   pub name: String,
   pub cpu_usage: f32,
 }
 
-#[derive(Default, Serialize)]
+#[derive(Default, Serialize, Deserialize)]
 pub struct Stats {
-  #[serde(skip_serializing)]
+  #[serde(skip_serializing, skip_deserializing)]
   sys: System,
   pub cpu_temp: Option<f32>,
   pub cpu_usage: Option<f32>,
